@@ -1,0 +1,43 @@
+# pragma version ^0.3.7
+
+interface Ownable:
+    def transferOwnership(new_owner: address): nonpayable
+
+owner: public(address)
+data_records: HashMap[address, uint256]
+is_active: public(bool)
+
+event DataUpdated:
+    user: indexed(address)
+    value: uint256
+
+event StatusChanged:
+    new_state: bool
+
+@external
+def __init__():
+    self.owner = msg.sender
+    self.is_active = True
+
+@external
+def update_data(_value: uint256):
+    assert self.is_active, "Protocol paused"
+    self.data_records[msg.sender] = _value
+    log DataUpdated(msg.sender, _value)
+
+@external
+@view
+def get_data(_user: address) -> uint256:
+    return self.data_records[_user]
+
+@external
+def set_status(_status: bool):
+    assert msg.sender == self.owner, "Not owner"
+    self.is_active = _status
+    log StatusChanged(_status)
+
+@external
+def transfer_ownership(_new_owner: address):
+    assert msg.sender == self.owner, "Not owner"
+    assert _new_owner != empty(address), "Invalid address"
+    self.owner = _new_owner

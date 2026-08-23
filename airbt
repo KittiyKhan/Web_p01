@@ -143,7 +143,7 @@ while running:
     screen.blit(score_text, (10, 10))
 
     pygame.display.flip()
-    clock.tick(FPS)
+    clock.tick(FPS)ed
 
 pygame.quit()
 sys.exit()
